@@ -1,0 +1,14 @@
+{
+  "compilerOptions": {
+    "baseUrl": ".",
+    "esModuleInterop": true,
+    "strict": true,
+    "paths": {
+      "@/*": ["./*"]
+    },
+    "moduleResolution": "bundler",
+    "target": "es2021"
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["node_modules"]
+}
