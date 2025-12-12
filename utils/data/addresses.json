@@ -1,0 +1,94 @@
+{
+    "addresses": [
+        {
+            "street": "1106 Madison St",
+            "city": "Oakland",
+            "state": "CA",
+            "zip": "94607"
+        },
+        {
+            "street": "742 Evergreen Terrace",
+            "city": "Springfield",
+            "state": "IL",
+            "zip": "62701"
+        },
+        {
+            "street": "1600 Pennsylvania Ave NW",
+            "city": "Washington",
+            "state": "DC",
+            "zip": "20500"
+        },
+        {
+            "street": "350 Fifth Ave",
+            "city": "New York",
+            "state": "NY",
+            "zip": "10118"
+        },
+        {
+            "street": "1 Infinite Loop",
+            "city": "Cupertino",
+            "state": "CA",
+            "zip": "95014"
+        },
+        {
+            "street": "1060 W Addison St",
+            "city": "Chicago",
+            "state": "IL",
+            "zip": "60613"
+        },
+        {
+            "street": "221B Baker St",
+            "city": "San Francisco",
+            "state": "CA",
+            "zip": "94102"
+        },
+        {
+            "street": "1313 Mockingbird Lane",
+            "city": "Los Angeles",
+            "state": "CA",
+            "zip": "90001"
+        },
+        {
+            "street": "123 Main St",
+            "city": "Austin",
+            "state": "TX",
+            "zip": "78701"
+        },
+        {
+            "street": "456 Elm St",
+            "city": "Seattle",
+            "state": "WA",
+            "zip": "98101"
+        },
+        {
+            "street": "789 Oak Ave",
+            "city": "Miami",
+            "state": "FL",
+            "zip": "33101"
+        },
+        {
+            "street": "321 Pine Rd",
+            "city": "Denver",
+            "state": "CO",
+            "zip": "80201"
+        },
+        {
+            "street": "555 Market St",
+            "city": "Boston",
+            "state": "MA",
+            "zip": "02101"
+        },
+        {
+            "street": "888 Broadway",
+            "city": "Portland",
+            "state": "OR",
+            "zip": "97201"
+        },
+        {
+            "street": "999 Park Ave",
+            "city": "Atlanta",
+            "state": "GA",
+            "zip": "30301"
+        }
+    ]
+}

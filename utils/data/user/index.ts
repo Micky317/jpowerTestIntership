@@ -51,7 +51,8 @@ export const createUser = async (page: Page, user: { name: string; role?: string
   const phone = "(123) 456-7890";
   const title = "Manager";
   const notes = "notes";
-  let address = "1106 Madison St, Oakland, CA 94607";
+  let address = "";
+
 
   await openUsersTable(page);
   await searchTable(page, user.name);

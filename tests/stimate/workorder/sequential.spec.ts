@@ -48,6 +48,7 @@ test.describe.serial('Work Order - All tests in sequence', () => {
             el.innerHTML = `<p>${text}</p>`;
         }, 'Work Order test client - lorem ipsum dolor sit amet, consectetur adipiscing elit.');
         await page.click('#create');
+        await page.waitForTimeout(5000);
     });
 
     test("Add property for the user", async () => {

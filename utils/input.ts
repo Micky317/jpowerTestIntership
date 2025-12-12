@@ -6,24 +6,62 @@ import { saveForm } from ".";
 import { openFirstRow, searchTable } from "./table";
 import { uploadFile } from ".";
 
-export const selectAddress = async (page: Page, id: string, line2?: string) => {
-  const partialAddress = "1106 Madison St, Oakland, CA";
-  const address = `${partialAddress} 94607`;
-  await page.dblclick(id);
-  await page.locator(id).pressSequentially(partialAddress.slice(0, -6), { delay: 100 });
-  const box = await page.locator(id).boundingBox();
-  if (!box) throw new Error();
-  await page.waitForTimeout(1000);
-  await page.mouse.click(box.x + box.width / 2, box.y + box.height + 10);
-  await expect(page.locator(id)).toHaveValue(address);
-  if (line2) await page.fill(`${id}-line2`, line2);
-  return address;
+const addressesPath = path.join(__dirname, "data", "addresses.json");
+const addressesData = JSON.parse(fs.readFileSync(addressesPath, "utf8"));
+const addresses = addressesData.addresses;
+
+export const getAddress = () => {
+  const randomIndex = Math.floor(Math.random() * addresses.length);
+  return addresses[randomIndex];
 };
 
-/*export const selectDateTime = async (page: Page, id: string, date: Dayjs, hour: number) => {
-  await page.fill(`#${id}`, date.format("YYYY-MM-DD"));
-  await selectOption(page, `#${id}-time`, date.hour(hour).startOf("h").format("h:mm A"));
-};*/
+export const selectAddress = async (
+  page: Page,
+  id: string,
+  line2?: string
+) => {
+  const addressObj = getAddress();
+  const partialAddress = `${addressObj.street}, ${addressObj.city}, ${addressObj.state}`;
+  const address = `${partialAddress} ${addressObj.zip}`;
+
+  // Esperar a que el input esté visible
+  await page.waitForSelector(id, { state: 'visible' });
+
+  // Limpiar el campo primero
+  await page.fill(id, '');
+
+  // Escribir la dirección letra por letra para activar el autocompletado de Google Maps
+  await page.type(id, partialAddress, { delay: 50 });
+
+  // Esperar más tiempo a que aparezcan las sugerencias de Google Maps API
+  await page.waitForTimeout(2500);
+
+  // Obtener la posición del input
+  const inputBox = await page.locator(id).boundingBox();
+
+  if (inputBox) {
+    // Mover el mouse 40 píxeles hacia abajo desde el input y hacer click
+    await page.mouse.move(inputBox.x + inputBox.width / 2, inputBox.y + 40);
+    await page.mouse.click(inputBox.x + inputBox.width / 2, inputBox.y + 40);
+  }
+
+  // Esperar a que se complete la selección y se llene el campo
+  await page.waitForTimeout(1000);
+
+  // Obtener la dirección real que se seleccionó (puede ser diferente a la que escribimos)
+  const selectedAddress = await page.inputValue(id);
+
+  // Rellenar la segunda línea si corresponde
+  if (line2) {
+    await page.fill(`${id}-line2`, line2);
+  }
+
+  // Retornar la dirección que realmente se seleccionó
+  return selectedAddress;
+};
+
+
+
 
 export const selectOption = async (page: Page, id: string, text?: string | string[]) => {
   await page.click(id).catch(() => {
@@ -82,21 +120,21 @@ export const toggleCheckbox = async (page: Page, id: string) => {
 
 export const notesAndFiles = async (page: Page, notes?: string) => {
   const notesText = notes || "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
-  
+
   await page.locator(`.ql-editor`).evaluate((el, text) => {
     el.innerHTML = `<p>${text}</p>`;
   }, notesText);
-  
+
   await uploadFile(page, `#addFile`);
 }
 export const fillDate = async (page: Page, fieldId: string, date = new Date()) => {
-  
+
   const year = date.getFullYear();
   const month = String(date.getMonth() + 1).padStart(2, '0');
   const day = String(date.getDate()).padStart(2, '0');
-  
+
   const dateString = `${year}-${month}-${day}`;
-  
+
   await page.fill(fieldId, dateString);
 };
 

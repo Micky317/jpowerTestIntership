@@ -10,8 +10,9 @@ export const fillContactCard = async (page: Page, id: string, getValues?: boolea
   const phone = "(111) 111-1111";
   const line2 = "line 2";
   const secondaryPhone = "(222) 222-2222";
-  const address = "1106 Madison St, Oakland, CA 94607";
   const notes = "lorem ipsum dolor sit amet, consectetur adipiscing elit. Sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.";
+
+  let address = "";
 
   if (!getValues) {
     await page.fill(`${id}-firstName`, firstName);
@@ -20,17 +21,22 @@ export const fillContactCard = async (page: Page, id: string, getValues?: boolea
     await page.fill(`${id}-phone`, phone);
     await page.click(`${id}-phoneType`);
     await page.click(`${id}-phoneType-Mobile`);
-    await page.fill(`${id}-secondaryPhone`, secondaryPhone);
-    await page.click(`${id}-secondaryPhoneType`);
-    await page.click(`${id}-secondaryPhoneType-Office`);
-    
+
     const addressInput = page.locator('input[type="address"]').first();
     await addressInput.waitFor({ state: 'visible' });
     const dynamicAddressId = await addressInput.getAttribute('id');
-    
-    await selectAddress(page, `#${dynamicAddressId}`);
+
+    address = await selectAddress(page, `#${dynamicAddressId}`);
     await page.fill(`#${dynamicAddressId}-line2`, line2);
-    
+
+    // Esperar a que la página se estabilice después de seleccionar la dirección
+    await page.waitForTimeout(1000);
+
+    // Llenar campos restantes después de la dirección
+    await page.fill(`${id}-secondaryPhone`, secondaryPhone);
+    await page.click(`${id}-secondaryPhoneType`);
+    await page.click(`${id}-secondaryPhoneType-Office`);
+
     await page.locator(`.ql-editor`).evaluate((el, text) => {
       el.innerHTML = `<p>${text}</p>`;
     }, notes);
@@ -57,15 +63,15 @@ export const validateContactCard = async (
   await expect(page.locator(`${id}-lastName`)).toHaveValue(contact.lastName);
   await expect(page.locator(`${id}-email`)).toHaveValue(contact.email);
   await expect(page.locator(`${id}-phone`)).toHaveValue(contact.phone);
-  
-  
+
+
   const addressInput = page.locator('input[type="address"]').first();
   await addressInput.waitFor({ state: 'visible' });
   const dynamicAddressId = await addressInput.getAttribute('id');
-  
+
   await expect(page.locator(`#${dynamicAddressId}`)).toHaveValue(contact.address);
   await expect(page.locator(`#${dynamicAddressId}-line2`)).toHaveValue(contact.line2);
-  
+
   await expect(page.locator(`${id}-secondaryPhone`)).toHaveValue(contact.secondaryPhone);
 };
 export const fillPropertyContactCard = async (page: Page, id: string, addressIndex: number = 0) => {
@@ -74,20 +80,22 @@ export const fillPropertyContactCard = async (page: Page, id: string, addressInd
   const email = "test@exmaple.com";
   const phone = "(333) 333-3333";
   const line2 = "line 2";
-  const address = "500 Terry A Francois Blvd, San Francisco, CA 94158";
 
   await page.fill(`${id}-firstName`, firstName);
   await page.fill(`${id}-lastName`, lastName);
   await page.fill(`${id}-email`, email);
   await page.fill(`${id}-phone`, phone);
-  
+
 
   const addressInput = page.locator('input[type="address"]').nth(addressIndex);
   await addressInput.waitFor({ state: 'visible' });
   const dynamicAddressId = await addressInput.getAttribute('id');
-    
-  await selectAddress(page, `#${dynamicAddressId}`);
+
+  // Use address from JSON system
+  const address = await selectAddress(page, `#${dynamicAddressId}`);
   await page.fill(`#${dynamicAddressId}-line2`, line2);
+
+  return { firstName, lastName, email, phone, address, line2 };
 }
 export const fillPropertyBillingContact = async (page: Page, contactIndex: number = 0, addressIndex: number = 0) => {
   const firstName = "billing first name";
@@ -102,13 +110,12 @@ export const fillPropertyBillingContact = async (page: Page, contactIndex: numbe
   await page.fill(`${id}-lastName`, lastName);
   await page.fill(`${id}-email`, email);
   await page.fill(`${id}-phone`, phone);
-  
+
   const addressInput = page.locator('input[type="address"]').nth(addressIndex);
   await addressInput.waitFor({ state: 'visible' });
   const dynamicAddressId = await addressInput.getAttribute('id');
-    
-  await selectAddress(page, `#${dynamicAddressId}`);
+  const address = await selectAddress(page, `#${dynamicAddressId}`);
   await page.fill(`#${dynamicAddressId}-line2`, line2);
 
-  return { firstName, lastName, email, phone, address: "1106 Madison St, Oakland, CA 94607", line2 };
+  return { firstName, lastName, email, phone, address, line2 };
 };
