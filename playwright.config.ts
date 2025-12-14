@@ -25,6 +25,7 @@ export default defineConfig({
   reporter: "html",
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
+    headless: false,
     video: "retain-on-failure",
     baseURL: process.env.BASE_URL,
     /* Base URL to use in actions like `await page.goto('/')`. */
@@ -40,7 +41,13 @@ export default defineConfig({
   projects: [
     {
       name: "chromium",
-      use: { ...devices["Desktop Chrome"] },
+      use: { 
+        ...devices["Desktop Chrome"],
+        launchOptions: {
+          slowMo: 500, // Ejecuta acciones con delay de 500ms
+          devtools: false, // Abre DevTools automáticamente (puedes cambiar a true si quieres)
+        },
+      },
     },
 
     {
